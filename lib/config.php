@@ -38,7 +38,7 @@ $cmds = [
             'msg' => 'New file is in location',
         ],
         'print' => [
-            'cmd' => 'lp -o landscape -o fit-to-page %s',
+            'cmd' => 'lp -o landscape -o scaling=95 %s',
             'msg' => '',
         ],
         'exiftool' => [

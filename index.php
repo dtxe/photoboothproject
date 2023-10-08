@@ -75,13 +75,59 @@ if (
     <?php if (is_file("private/overrides.css")): ?>
         <link rel="stylesheet" href="private/overrides.css?v=<?php echo $config['photobooth']['version']; ?>"/>
     <?php endif; ?>
+
+    <style>
+        .block_container {
+            float:left;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            background: none;
+            z-index: 500;
+        }
+
+        .block_flex {
+            display: flex;
+            background: none;
+            height: 100%;
+            width: 100%;
+        }
+
+        .block_center {
+            width: 83.375%;
+        }
+
+        .block_side {
+            flex-grow: 1;
+            background-color: #000;
+            opacity: 70%;
+            /* border: #fff 2px solid; */
+            height: 100%;
+            z-index: 500;
+        }
+
+        .loaderImage {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            
+        }
+    </style>
 </head>
 
 <body class="deselect">
+
 <video id="video--view" class="<?php echo $config['preview']['flip']; ?> <?php echo $config['preview']['style']; ?>"
        autoplay playsinline></video>
 <div id="blocker"></div>
 <div id="aperture"></div>
+
 <div id="wrapper">
     <?php include('template/' . $config['ui']['style'] . '.template.php'); ?>
 
@@ -101,8 +147,13 @@ if (
         </div>
     <?php endif; ?>
 
+
     <!-- Loader -->
     <div class="stages" id="loader">
+        
+<div class="block_container">
+<div class="block_flex"><div class="block_side">.</div><div class="block_center"></div><div class="block_side">.</div></div>
+</div>
         <div class="loaderInner">
             <div class="spinner">
                 <i class="<?php echo $config['icons']['spinner']; ?>"></i>

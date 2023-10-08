@@ -384,16 +384,16 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
                 $img3RatioX = 0.43611;
                 $img4RatioX = 0.63667;
             } else {
-                $widthNew = $collage_height * 0.32;
+                $widthNew = $collage_height * 0.30;
                 $heightNew = $widthNew * 1.5;
 
-                $shortRatioY = 0.01;
-                $longRatioY = 0.51;
+                $shortRatioY = 0.025;
+                $longRatioY = 0.525;
 
-                $img1RatioX = 0.04194;
-                $img2RatioX = 0.27621;
-                $img3RatioX = 0.51048;
-                $img4RatioX = 0.74475;
+                $img1RatioX = 0.02531;
+                $img2RatioX = 0.24080;
+                $img3RatioX = 0.45630;
+                $img4RatioX = 0.67178;
             }
 
             $pictureOptions = [
@@ -423,11 +423,11 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
             $heightNew = $widthNew * 1.5;
 
             $shortRatioY = 0.01;
-            $longRatioY = 0.51;
+            $longRatioY = 0.5 + $shortRatioY;
 
             $img1RatioX = 0.04194;
-            $img2RatioX = 0.27621;
-            $img3RatioX = 0.51048;
+            $img2RatioX = 0.28597;
+            $img3RatioX = 0.53;
 
             $pictureOptions = [
                 [$collage_width * $img1RatioX, $collage_height * $shortRatioY, $widthNew, $heightNew, 90],
@@ -438,12 +438,52 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
                 [$collage_width * $img3RatioX, $collage_height * $longRatioY, $widthNew, $heightNew, 90],
             ];
 
+            $centerX = $collage_width * 0.5;
+            $centerY = $collage_height * 0.5;
+            $scaleFactor = 0.99;
+
+            $pictureOptions = array_map(function ($image) use ($centerX, $centerY, $scaleFactor) {
+                $x_top_left = $image[0];
+                $y_top_left = $image[1];
+                $image_width = $image[2];
+                $image_height = $image[3];
+
+                // Calculate the center of the current image
+                $imageCenterX = $x_top_left + $image_width / 2;
+                $imageCenterY = $y_top_left + $image_height / 2;
+
+                // Calculate the vector from the group center to the image center
+                $vectorX = $imageCenterX - $centerX;
+                $vectorY = $imageCenterY - $centerY;
+
+                // Scale the vector by the scale factor
+                $vectorX *= $scaleFactor;
+                $vectorY *= $scaleFactor;
+
+                // Calculate the new center of the image
+                $newImageCenterX = $centerX + $vectorX;
+                $newImageCenterY = $centerY + $vectorY;
+
+                // Calculate the new top left position of the image
+                $new_x_top_left = $newImageCenterX - $image_width * $scaleFactor / 2;
+                $new_y_top_left = $newImageCenterY - $image_height * $scaleFactor / 2;
+
+                // Return the new position and size of the image
+                return [
+                    $new_x_top_left, 
+                    $new_y_top_left, 
+                    $image_width * $scaleFactor, 
+                    $image_height * $scaleFactor,
+                    90
+                ];
+                }, $pictureOptions);
+
             for ($i = 0; $i < 3; $i++) {
                 addPicture($my_collage, $editImages[$i], $pictureOptions[$i], $c);
                 addPicture($my_collage, $editImages[$i], $pictureOptions[$i + 3], $c);
             }
             $dashedline_color = imagecolorallocate($my_collage, $dashed_r, $dashed_g, $dashed_b);
-            drawDashedLine($my_collage, $collage_width * 0.03, $collage_height / 2, $collage_width * 0.97, $collage_height / 2, $dashedline_color);
+            // drawDashedLine($my_collage, $collage_width * 0.03, $collage_height / 2, $collage_width * 0.97, $collage_height / 2, $dashedline_color);
             break;
         default:
             $collageConfigFilePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . $c->collageLayout;
