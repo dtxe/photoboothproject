@@ -119,18 +119,9 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
     $collage_width = $collage_height * 1.5;
 
     $my_collage = imagecreatetruecolor($collage_width, $collage_height);
-    // Allocate the white color
-    $white = imagecolorallocate($my_collage, 255, 255, 255);
-
-    // Fill the image with white
-    imagefill($my_collage, 0, 0, $white);
-
-    // CONFIGURE GLOBAL SCALE FACTORS TO ACCOUNT FOR PRINTER
-    $globalScaleFactor = 1.0;
-    $globalXShift = 0.0;
-    $globalYShift = 0.0;
-
-
+    $globalScaleFactor = 0.97;
+    $globalXShift = 0.01;
+    $globalYShift = 0;
     if (testFile($c->collageBackground)) {
 	    $backgroundImage = imagecreatefromstring(file_get_contents($c->collageBackground));
 
@@ -438,12 +429,12 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
             $widthNew = $collage_height * 0.31;
             $heightNew = $widthNew * 1.5;
 
-            $shortRatioY = 0.015 + $globalYShift;
-            $longRatioY = 0.5075 + $shortRatioY + $globalYShift;
+            $shortRatioY = 0.015 + $globalXShift;
+            $longRatioY = 0.5075 + $shortRatioY + $globalXShift;
 
-            $img1RatioX = 0.04194 + $globalXShift;
-            $img2RatioX = 0.28597 + $globalXShift;
-            $img3RatioX = 0.53    + $globalXShift;
+            $img1RatioX = 0.04194;
+            $img2RatioX = 0.28597;
+            $img3RatioX = 0.53;
 
             $pictureOptions = [
                 [$collage_width * $img1RatioX, $collage_height * $shortRatioY, $widthNew, $heightNew, 90],

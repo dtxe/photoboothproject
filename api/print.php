@@ -52,7 +52,7 @@ $line1text = $config['textonprint']['line1'];
 $line2text = $config['textonprint']['line2'];
 $line3text = $config['textonprint']['line3'];
 
-if (!file_exists($filename_print)) {
+if (true) {
     // rotate image if needed
     list($width, $height) = getimagesize($filename_source);
     if ($width > $height || $config['print']['no_rotate'] === true) {
@@ -71,6 +71,40 @@ if (!file_exists($filename_print)) {
     }
 
     $source = imagecreatefromjpeg($filename_print);
+
+    // // global resizing to account for printer quirks
+    // $globalScaleFactor = 0.955;
+    // $globalXShift = 0.01;
+    // $globalYShift = 0.000;
+
+    // // Get the dimensions of the source image
+    // $sourceWidth = imagesx($imgfile);
+    // $sourceHeight = imagesy($imgfile);
+
+    // $source = imagecreatetruecolor($sourceWidth, $sourceHeight);
+    // $white = imagecolorallocate($source, 255, 255, 255);
+
+    // // Fill the new image with white color
+    // imagefill($source, 0, 0, $white);
+
+    // // Calculate the new dimensions after applying the scale factor
+    // $newWidth = intval($sourceWidth * $globalScaleFactor);
+    // $newHeight = intval($sourceHeight * $globalScaleFactor);
+
+    // // Calculate the shift values in pixels
+    // $xShiftPixels = intval($sourceWidth * $globalXShift + (1-$globalScaleFactor) / 2 * $sourceWidth);
+    // $yShiftPixels = intval($sourceHeight * $globalYShift+ (1-$globalScaleFactor) / 2 * $sourceHeight);
+
+    // // Copy and resample the image into the new image with scaling and shifting
+    // imagecopyresampled(
+    //     $source, $imgfile,
+    //     $xShiftPixels, $yShiftPixels, 0, 0,  // Shifting values
+    //     $newWidth, $newHeight,
+    //     $sourceWidth, $sourceHeight
+    // );
+
+    // imagedestroy($imgfile);
+
 
     if ($config['print']['qrcode'] && file_exists('../vendor/phpqrcode/lib/full/qrlib.php')) {
         // create qr code
