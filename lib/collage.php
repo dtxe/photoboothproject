@@ -8,7 +8,8 @@ require_once __DIR__ . '/applyText.php';
 require_once __DIR__ . '/filter.php';
 require_once __DIR__ . '/polaroid.php';
 
-function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', CollageConfig $c = null) {
+function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', CollageConfig $c = null)
+{
     if (is_null($c)) {
         $c = new CollageConfig();
     }
@@ -132,13 +133,13 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
 
 
     if (testFile($c->collageBackground)) {
-	    $backgroundImage = imagecreatefromstring(file_get_contents($c->collageBackground));
+        $backgroundImage = imagecreatefromstring(file_get_contents($c->collageBackground));
 
-	$new_width = $collage_width * $globalScaleFactor;
-	$new_height = $collage_height * $globalScaleFactor;
+        $new_width = $collage_width * $globalScaleFactor;
+        $new_height = $collage_height * $globalScaleFactor;
 
         $backgroundImage = resizeImage($backgroundImage, $new_width, $new_height);
-        imagecopy($my_collage, $backgroundImage, ($collage_width-$new_width)/2 + ($globalXShift * $collage_width), ($collage_height-$new_height)/2 + ($globalYShift * $collage_height), 0, 0, $new_width, $new_height);
+        imagecopy($my_collage, $backgroundImage, ($collage_width - $new_width) / 2 + ($globalXShift * $collage_width), ($collage_height - $new_height) / 2 + ($globalYShift * $collage_height), 0, 0, $new_width, $new_height);
     } else {
         $background = imagecolorallocate($my_collage, $bg_r, $bg_g, $bg_b);
         imagefill($my_collage, 0, 0, $background);
@@ -435,64 +436,54 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
                 $rotate_after_creation = true;
             }
 
-            $widthNew = $collage_height * 0.31;
-            $heightNew = $widthNew * 1.5;
+            // Define your scale factor for image size.
+            $scale = 0.9; // Change this to increase or decrease the image sizes
 
-            $shortRatioY = 0.015 + $globalYShift;
-            $longRatioY = 0.5075 + $shortRatioY + $globalYShift;
+            // Calculate the base dimensions (using your original proportions).
+            $baseWidth = $collage_height * 0.31;
+            $baseHeight = $baseWidth * 1.5;
 
-            $img1RatioX = 0.04194 + $globalXShift;
-            $img2RatioX = 0.28597 + $globalXShift;
-            $img3RatioX = 0.53    + $globalXShift;
+            // Apply the scale factor.
+            $widthNew = $baseWidth * $scale;
+            $heightNew = $baseHeight * $scale;
 
-            $pictureOptions = [
-                [$collage_width * $img1RatioX, $collage_height * $shortRatioY, $widthNew, $heightNew, 90],
-                [$collage_width * $img2RatioX, $collage_height * $shortRatioY, $widthNew, $heightNew, 90],
-                [$collage_width * $img3RatioX, $collage_height * $shortRatioY, $widthNew, $heightNew, 90],
-                [$collage_width * $img1RatioX, $collage_height * $longRatioY, $widthNew, $heightNew, 90],
-                [$collage_width * $img2RatioX, $collage_height * $longRatioY, $widthNew, $heightNew, 90],
-                [$collage_width * $img3RatioX, $collage_height * $longRatioY, $widthNew, $heightNew, 90],
+            // Define the center X positions for each column (as ratios of the collage width).
+            
+            /////////////////// 
+            // ↓ EDIT HERE ↓ //
+            $xposfn = function ($i) use ($collage_width) {
+                return $collage_width * (0.2175 + $i * 0.2180);
+            };
+            // ↑ EDIT HERE ↑ //
+            /////////////////// 
+
+            $centerXPositions = [
+                $xposfn(0),
+                $xposfn(i: 1),
+                $xposfn(i: 2)
             ];
 
-            $centerX = $collage_width * 0.5;
-            $centerY = $collage_height * 0.5;
-            $scaleFactor = 1.0 * $globalScaleFactor;
+            // Define the center Y positions for each film strip.
+            $centerYPositions = [
+                $collage_height / 4.0 * 1.0,                // Top film strip center
+                $collage_height / 4.0 * 3.0,                // Bottom film strip center
+            ];
 
-            $pictureOptions = array_map(function ($image) use ($centerX, $centerY, $scaleFactor) {
-                $x_top_left = $image[0];
-                $y_top_left = $image[1];
-                $image_width = $image[2];
-                $image_height = $image[3];
+            $angle = 90; // All images are rotated by 90 degrees
 
-                // Calculate the center of the current image
-                $imageCenterX = $x_top_left + $image_width / 2;
-                $imageCenterY = $y_top_left + $image_height / 2;
+            // Build the picture options array using nested loops for rows and columns.
+            $pictureOptions = [];
 
-                // Calculate the vector from the group center to the image center
-                $vectorX = $imageCenterX - $centerX;
-                $vectorY = $imageCenterY - $centerY;
+            foreach ($centerYPositions as $centerY) {
+                foreach ($centerXPositions as $centerX) {
+                    // Convert center coordinates to top-left coordinates.
+                    $x = $centerX - ($widthNew / 2);
+                    $y = $centerY - ($heightNew / 2);
+                    $pictureOptions[] = [$x, $y, $widthNew, $heightNew, $angle];
+                }
+            }
 
-                // Scale the vector by the scale factor
-                $vectorX *= $scaleFactor;
-                $vectorY *= $scaleFactor;
 
-                // Calculate the new center of the image
-                $newImageCenterX = $centerX + $vectorX;
-                $newImageCenterY = $centerY + $vectorY;
-
-                // Calculate the new top left position of the image
-                $new_x_top_left = $newImageCenterX - $image_width * $scaleFactor / 2;
-                $new_y_top_left = $newImageCenterY - $image_height * $scaleFactor / 2;
-
-                // Return the new position and size of the image
-                return [
-                    $new_x_top_left, 
-                    $new_y_top_left, 
-                    $image_width * $scaleFactor, 
-                    $image_height * $scaleFactor,
-                    90
-                ];
-                }, $pictureOptions);
 
             for ($i = 0; $i < 3; $i++) {
                 addPicture($my_collage, $editImages[$i], $pictureOptions[$i], $c);
@@ -570,14 +561,16 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
     return true;
 }
 
-function doMath($expression): int {
+function doMath($expression): int
+{
     $o = 0;
     // eval is evil. To mitigate any attacks the allowed characters are limited to numbers and math symbols
-    eval('$o = ' . preg_replace('/[^0-9\+\-\*\/\(\)\.]/', '', $expression) . ';');
+    eval ('$o = ' . preg_replace('/[^0-9\+\-\*\/\(\)\.]/', '', $expression) . ';');
     return $o;
 }
 
-function drawDashedLine($my_collage, $x1, $y1, $x2, $y2, $dashedline_color) {
+function drawDashedLine($my_collage, $x1, $y1, $x2, $y2, $dashedline_color)
+{
     settype($x1, 'integer');
     settype($x2, 'integer');
     settype($y1, 'integer');
@@ -597,7 +590,8 @@ function drawDashedLine($my_collage, $x1, $y1, $x2, $y2, $dashedline_color) {
     imageline($my_collage, $x1, $y1, $x2, $y2, IMG_COLOR_STYLED);
 }
 
-function addPicture($my_collage, $filename, $pictureOptions, CollageConfig $c) {
+function addPicture($my_collage, $filename, $pictureOptions, CollageConfig $c)
+{
     $dX = intval($pictureOptions[0]);
     $dY = intval($pictureOptions[1]);
     $width = intval($pictureOptions[2]);

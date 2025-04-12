@@ -1,11 +1,11 @@
 printers:
-  - name: G2060USB
-    scale: 0.96
-    xshift: 0.07
-    yshift: 0.02
+  # - name: G2060USB
+  #   scale: 0.96
+  #   xshift: 0.025
+  #   yshift: 0.017
   
   - name: G3070LAN
     scale: 0.96
-    xshift: 0.065
-    yshift: 0.017
+    xshift: 0.025
+    yshift: 0.015
 
