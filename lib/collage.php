@@ -436,8 +436,11 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
                 $rotate_after_creation = true;
             }
 
+            /**
+
+            // PORTRAIT FILM STRIPS
             // Define your scale factor for image size.
-            $scale = 0.9; // Change this to increase or decrease the image sizes
+            $scale = 0.8; // Change this to increase or decrease the image sizes
 
             // Calculate the base dimensions (using your original proportions).
             $baseWidth = $collage_height * 0.31;
@@ -452,7 +455,7 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
             /////////////////// 
             // ↓ EDIT HERE ↓ //
             $xposfn = function ($i) use ($collage_width) {
-                return $collage_width * (0.2175 + $i * 0.2180);
+                return $collage_width * (0.2 + $i * 0.21);
             };
             // ↑ EDIT HERE ↑ //
             /////////////////// 
@@ -470,6 +473,46 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
             ];
 
             $angle = 90; // All images are rotated by 90 degrees
+
+             */
+            
+
+            // LANDSCAPE FILM STRIPS
+            // Define your scale factor for image size.
+            $scale = 0.8; // Change this to increase or decrease the image sizes
+
+            // Calculate the base dimensions (using your original proportions).
+            $baseWidth = $collage_height * 0.5;
+            $baseHeight = $baseWidth * 1.0 / 1.5;
+
+            // Apply the scale factor.
+            $widthNew = $baseWidth * $scale;
+            $heightNew = $baseHeight * $scale;
+
+            // Define the center X positions for each column (as ratios of the collage width).
+            
+            /////////////////// 
+            // ↓ EDIT HERE ↓ //
+            $xposfn = function ($i) use ($collage_width) {
+                return $collage_width * (0.2 + $i * 0.3);
+            };
+            // ↑ EDIT HERE ↑ //
+            /////////////////// 
+
+            $centerXPositions = [
+                $xposfn(0),
+                $xposfn(i: 1),
+                $xposfn(i: 2)
+            ];
+
+            // Define the center Y positions for each film strip.
+            $centerYPositions = [
+                $collage_height / 4.0 * 0.95,                // Top film strip center
+                $collage_height / 4.0 * 2.95,                // Bottom film strip center
+            ];
+
+            $angle = 0; // All images are rotated by 90 degrees
+
 
             // Build the picture options array using nested loops for rows and columns.
             $pictureOptions = [];
