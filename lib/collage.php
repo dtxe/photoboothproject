@@ -436,11 +436,11 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
                 $rotate_after_creation = true;
             }
 
-            /**
+            
 
             // PORTRAIT FILM STRIPS
             // Define your scale factor for image size.
-            $scale = 0.8; // Change this to increase or decrease the image sizes
+            $scale = 0.95; // Change this to increase or decrease the image sizes
 
             // Calculate the base dimensions (using your original proportions).
             $baseWidth = $collage_height * 0.31;
@@ -455,7 +455,7 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
             /////////////////// 
             // ↓ EDIT HERE ↓ //
             $xposfn = function ($i) use ($collage_width) {
-                return $collage_width * (0.2 + $i * 0.21);
+                return $collage_width * (0.15 + $i * 0.24);
             };
             // ↑ EDIT HERE ↑ //
             /////////////////// 
@@ -474,9 +474,10 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
 
             $angle = 90; // All images are rotated by 90 degrees
 
-             */
+             
             
 
+            /*
             // LANDSCAPE FILM STRIPS
             // Define your scale factor for image size.
             $scale = 0.8; // Change this to increase or decrease the image sizes
@@ -512,6 +513,7 @@ function createCollage($srcImagePaths, $destImagePath, $filter = 'plain', Collag
             ];
 
             $angle = 0; // All images are rotated by 90 degrees
+            */
 
 
             // Build the picture options array using nested loops for rows and columns.

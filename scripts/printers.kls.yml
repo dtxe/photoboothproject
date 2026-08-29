@@ -1,0 +1,11 @@
+printers:
+  - name: G2060USB
+    scale: 0.96
+    xshift: 0.025
+    yshift: 0.017
+  
+  - name: Canon_G3070_series_2_USB
+    scale: 0.96
+    xshift: 0.025
+    yshift: 0.015
+
